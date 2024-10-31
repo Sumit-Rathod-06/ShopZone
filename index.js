@@ -9,6 +9,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();  
 const port = 3000;
 
+let products = [];
+
 const db = new pg.Client({
   user : "postgres",
   host : "localhost",
@@ -41,7 +43,21 @@ app.post("/login-customer",async (req,res)=>{
 
     if(dbpass === password)
     {
-      res.send("<h1>Welcome to Customer HomePage</h1>");
+      const pro = await db.query("Select * From product");
+        if(pro.rows <= 0)
+        {
+          console.log("Error : ",err.stack);
+        }
+        else
+        {
+          products = pro.rows;
+        }
+
+        res.render("home-customer.ejs",
+          {
+              products: products
+          }
+        )
     }
     else{
       res.send("<h1>Incorrect Password</h1>");
@@ -59,6 +75,7 @@ app.post("/login-seller",async (req,res)=>{
   const password = req.body["password"];
 
   const resul = await db.query("Select password from seller where name = $1",[name]);
+  const id = await db.query("Select id from seller where name = $1",[name]);
 
   if(resul.rows.length > 0)
   {
@@ -67,7 +84,21 @@ app.post("/login-seller",async (req,res)=>{
 
     if(dbpass === password)
     {
-      res.send("<h1>Welcome to Seller HomePage</h1>");
+        const pro = await db.query("Select * From product Where sid = $1",[id.rows[0].id]);
+        if(pro.rows <= 0)
+        {
+          products = [];
+        }
+        else
+        {
+          products = pro.rows;
+        }
+
+        res.render("home-seller.ejs",
+          {
+              products: products
+          }
+        )
     }
     else{
       res.send("<h1>Incorrect Password</h1>");
