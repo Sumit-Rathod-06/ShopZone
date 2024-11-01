@@ -3,24 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
-  <link rel="stylesheet" href="styles1.css">
+  <title>Buy Product</title>
+  <style>
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+  }
+
+  .login-container {
+    width: 300px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    text-align: center;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  label {
+    font-size: 14px;
+    color: #666;
+    display: block;
+    margin-top: 10px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+
+    .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            margin-left: 10px;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+        }
+
+        .product-price {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+  </style>
 </head>
 <body>
 
   <div class="login-container">
-    <h2>Login for Customer</h2>
-    <form action="/login-customer" method="POST">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required>
+    <div class="container">
+      <h1 style="color: #007bff;">Buy Product</h1>
+      <% if(locals.products) {%>
+      <div >
+          <% products.forEach(function(product) { %>
+              <div class="product-card">
+                  <div>
+                      <h2 class="product-title" style="color: red;"><%= product.pname %></h2>
+                      <p class="product-price" style="color: red;"><%= product.price %> Rs</p>
+                  </div>
+              </div>
+      </div>
       
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
+  </div>
+  <form action="/finallybuyproduct/<%= product.id %>" method="POST">
+      <label for="payment-mode">Payment Mode(UPI/Cash)</label>
+      <input type="text" id="payment-mode" name="payment-mode" required>
       
-      <button type="submit">Login</button>
-      <p class="signup-text">Don't have an account? <a href="/register-customer.html">Register</a></p>
+      <label for="date">Date</label>
+      <input type="text" id="date" name="date" required>
+      
+      <button type="submit">BUY</button>
     </form>
   </div>
+  <% }); %>
+  <%}%>
 
 </body>
 </html>

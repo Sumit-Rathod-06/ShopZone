@@ -187,7 +187,7 @@ app.get("/deleteproduct/:id", async (req, res) => {
 
 app.get("/buyproduct/:id",async (req,res) => {
 
-  const pro = await db.query("Select * From product Where sid = $1",[req.params.id]);
+  const pro = await db.query("Select * From product Where id = $1",[req.params.id]);
   if(pro.rows <= 0)
   {
     products = [];
@@ -201,6 +201,31 @@ app.get("/buyproduct/:id",async (req,res) => {
         products: products
     }
   )
+})
+
+app.post("/finallybuyproduct/:id",async (req,res)=>{
+  const date = req.body["date"];
+  const mode = req.body["payment-mode"];
+  const pid = req.params.id;
+  const id = await db.query("Select id from customer where name = $1",[name]);
+
+  await db.query("Insert into odetails(pid,cid,payment_mode,odate) values($1,$2,$3,$4)",[pid,id.rows[0].id,mode,date]);
+
+        const pro = await db.query("Select * From product");
+        if(pro.rows <= 0)
+        {
+          console.log("Error : ",err.stack);
+        }
+        else
+        {
+          products = pro.rows;
+        }
+
+        res.render("home-customer.ejs",
+          {
+              products: products
+          }
+        )
 })
 
 app.listen(port,()=>{
