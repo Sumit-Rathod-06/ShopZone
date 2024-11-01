@@ -122,8 +122,8 @@
     <nav class="navbar">
         <a href="/" class="navbar-brand">ShopZone</a>
         <div class="navbar-links">
-            <a href="../public/index.html">Home</a>
-            <a href="#">Add Product</a>
+            <a href="/">Home</a>
+            <a href="/add-product">Add Product</a>
         </div>
     </nav>
 
@@ -138,7 +138,7 @@
                     </div>
                     <div>
                         <p class="product-price"><%= product.price%> Rs</p>
-                        <a href="#" class="btn">DELETE</a>
+                        <a class="btn" href="/deleteproduct/<%= product.id %>">Delete</a>
                     </div>
                 </div>
             <% }); %>
