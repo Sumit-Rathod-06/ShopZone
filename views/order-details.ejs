@@ -122,7 +122,7 @@
     <nav class="navbar">
         <a href="/" class="navbar-brand">ShopZone</a>
         <div class="navbar-links">
-            <a href="../public/index.html">Home</a>
+            <a href="/homepage-customer">Home</a>
             <a href="#">Order Details</a>
         </div>
     </nav>
@@ -140,7 +140,7 @@
                     <div>
                         <p class="product-description"><%= product.payment_mode%></p>
                         <p class="product-description"><%= product.odate%></p>
-                        <a class="btn" href="/deleteodatails/<%= product.id %>">DELETE</a>
+                        <a class="btn" href="/deleteodetails/<%= product.id %>">DELETE</a>
                     </div>
                 </div>
             <% }); %>

@@ -31,6 +31,44 @@ app.get("/", (req, res) => {
 
 db.connect();
 
+app.get("/homepage-customer", async (req,res) => {
+  const pro = await db.query("Select * From product");
+  if(pro.rows <= 0)
+  {
+    console.log("Error : ",err.stack);
+  }
+  else
+  {
+    products = pro.rows;
+  }
+
+  res.render("home-customer.ejs",
+    {
+        products: products
+    }
+  )
+})
+
+app.get("/homepage-seller",async (req,res)=>{
+
+  const id = await db.query("Select id from seller where name = $1",[name]);
+  const pro = await db.query("Select * From product Where sid = $1",[id.rows[0].id]);
+  if(pro.rows <= 0)
+  {
+    products = [];
+  }
+  else
+  {
+    products = pro.rows;
+  }
+
+  res.render("home-seller.ejs",
+    {
+        products: products
+    }
+  )
+})
+
 app.post("/login-customer",async (req,res)=>{
 
   name = req.body["username"];
@@ -45,21 +83,7 @@ app.post("/login-customer",async (req,res)=>{
 
     if(dbpass === password)
     {
-      const pro = await db.query("Select * From product");
-        if(pro.rows <= 0)
-        {
-          console.log("Error : ",err.stack);
-        }
-        else
-        {
-          products = pro.rows;
-        }
-
-        res.render("home-customer.ejs",
-          {
-              products: products
-          }
-        )
+      res.redirect("/homepage-customer");
     }
     else{
       res.send("<h1>Incorrect Password</h1>");
@@ -77,7 +101,6 @@ app.post("/login-seller",async (req,res)=>{
   password = req.body["password"];
 
   const resul = await db.query("Select password from seller where name = $1",[name]);
-  const id = await db.query("Select id from seller where name = $1",[name]);
 
   if(resul.rows.length > 0)
   {
@@ -86,21 +109,7 @@ app.post("/login-seller",async (req,res)=>{
 
     if(dbpass === password)
     {
-        const pro = await db.query("Select * From product Where sid = $1",[id.rows[0].id]);
-        if(pro.rows <= 0)
-        {
-          products = [];
-        }
-        else
-        {
-          products = pro.rows;
-        }
-
-        res.render("home-seller.ejs",
-          {
-              products: products
-          }
-        )
+        res.redirect("/homepage-seller");
     }
     else{
       res.send("<h1>Incorrect Password</h1>");
@@ -148,20 +157,7 @@ app.post("/add-product-redirect",async (req,res) => {
 
   await db.query("Insert into product(sid,pname,price,description) values($1,$2,$3,$4)",[id.rows[0].id,pname,price,desc]);
 
-  const pro = await db.query("Select * From product Where sid = $1",[id.rows[0].id]);
-  if(pro.rows <= 0)
-  {
-    products = [];
-  }
-  else
-  {
-    products = pro.rows;
-  }
-  res.render("home-seller.ejs",
-    {
-        products: products
-    }
-  )
+  res.redirect("/homepage-seller");
   
 })
 
@@ -169,21 +165,9 @@ app.get("/deleteproduct/:id", async (req, res) => {
   
   await db.query("Delete from product where id = $1",[req.params.id]);
 
-  const id = await db.query("Select id from seller where name = $1",[name]);
-  const pro = await db.query("Select * From product Where sid = $1",[id.rows[0].id]);
-  if(pro.rows <= 0)
-  {
-    products = [];
-  }
-  else
-  {
-    products = pro.rows;
-  }
-  res.render("home-seller.ejs",
-    {
-        products: products
-    }
-  )});
+  res.redirect("/homepage-seller");
+
+  });
 
 app.get("/buyproduct/:id",async (req,res) => {
 
@@ -216,21 +200,7 @@ app.post("/finallybuyproduct/:id",async (req,res)=>{
 
   await db.query("Insert into odetails(pid,cid,payment_mode,odate,pname,price) values($1,$2,$3,$4,$5,$6)",[pid,id.rows[0].id,mode,date,pname,price]);
 
-        const pro = await db.query("Select * From product");
-        if(pro.rows <= 0)
-        {
-          console.log("Error : ",err.stack);
-        }
-        else
-        {
-          products = pro.rows;
-        }
-
-        res.render("home-customer.ejs",
-          {
-              products: products
-          }
-        )
+  res.redirect("/homepage-customer");
 })
 
 app.get("/orderdetails",async (req,res)=>{
@@ -251,6 +221,15 @@ app.get("/orderdetails",async (req,res)=>{
       })
     }
 })
+
+app.get("/deleteodetails/:id",async (req,res)=>{
+  const id = req.params.id;
+  await db.query("Delete from odetails where id = $1",[id]);
+
+  res.redirect("/orderdetails");
+
+})
+
 
 app.listen(port,()=>{
     console.log(`Server Running on Port ${port}`);
