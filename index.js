@@ -207,9 +207,14 @@ app.post("/finallybuyproduct/:id",async (req,res)=>{
   const date = req.body["date"];
   const mode = req.body["payment-mode"];
   const pid = req.params.id;
+
+  const resul = await db.query("Select * from product where id = $1",[pid]);
+  const pname = resul.rows[0].pname;
+  const price = resul.rows[0].price;
+
   const id = await db.query("Select id from customer where name = $1",[name]);
 
-  await db.query("Insert into odetails(pid,cid,payment_mode,odate) values($1,$2,$3,$4)",[pid,id.rows[0].id,mode,date]);
+  await db.query("Insert into odetails(pid,cid,payment_mode,odate,pname,price) values($1,$2,$3,$4,$5,$6)",[pid,id.rows[0].id,mode,date,pname,price]);
 
         const pro = await db.query("Select * From product");
         if(pro.rows <= 0)
@@ -226,6 +231,25 @@ app.post("/finallybuyproduct/:id",async (req,res)=>{
               products: products
           }
         )
+})
+
+app.get("/orderdetails",async (req,res)=>{
+  const temp_id = await db.query("Select id from customer where name = $1",[name]);
+  const cid = temp_id.rows[0].id;
+
+    const resul = await db.query("Select * from odetails where cid = $1",[cid]);
+    if(resul.rows.length > 0)
+    {
+        res.render("order-details.ejs",{
+          products : resul.rows
+        })
+    }
+    else
+    {
+      res.render("order-details.ejs",{
+        products : []
+      })
+    }
 })
 
 app.listen(port,()=>{

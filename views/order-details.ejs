@@ -123,23 +123,24 @@
         <a href="/" class="navbar-brand">ShopZone</a>
         <div class="navbar-links">
             <a href="../public/index.html">Home</a>
-            <a href="/orderdetails">Order Details</a>
+            <a href="#">Order Details</a>
         </div>
     </nav>
 
     <div class="container">
-        <h1>Welcome to ShopZone</h1>
+        <h1>Order Details</h1>
         <% if(locals.products) {%>
         <div class="products">
             <% products.forEach(function(product) { %>
                 <div class="product-card">
                     <div>
                         <h2 class="product-title"><%= product.pname %></h2>
-                        <p class="product-description"><%= product.description %></p>
+                        <p class="product-price"><%= product.price %> Rs</p>
                     </div>
                     <div>
-                        <p class="product-price"><%= product.price%> Rs</p>
-                        <a class="btn" href="/buyproduct/<%= product.id %>">BUY</a>
+                        <p class="product-description"><%= product.payment_mode%></p>
+                        <p class="product-description"><%= product.odate%></p>
+                        <a class="btn" href="/deleteodatails/<%= product.id %>">DELETE</a>
                     </div>
                 </div>
             <% }); %>
